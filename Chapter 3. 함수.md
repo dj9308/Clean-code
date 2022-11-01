@@ -44,6 +44,53 @@
 ---
 
 - 함수가 확실히 한 가지 작업만 하려면 함수 내 모든 문장의 추상화 수준이 동일해야 한다.
+- 한 함수 내에 추상화 수준을 섞으면 코드를 읽는 사람이 헷깔린다. 특정 표현이 근본 개념인지 아니면 세부사항인지 구분하기 어려운 탓이다.
+  - getHtml() 함수는 추상화 수준이 아주 높다.
+  - String pagePathName = PathParser.render(pagepath)는 추상화 수준이 중간이다.
+  - .append("\n")와 같은 코드는 추상화 수준이 아주 낮다.
+- 근본 개념과 세부사항을 뒤섞기 시작하면 깨어진 창문처럼 사람들이 함수에 세부사항을 점점 더 추가한다.
+
+### 내려가기 규칙
+
+- 코드는 위에서 아래로 이야기처럼 읽혀야 좋다.
+- 위에서 아래로 프로그램을 읽으면 함수 추상화 수준이 한 단계씩 낮아진다.
+- 다르게 표현하면, 일련의 TO 문단을 읽듯이 프로그램이 읽혀야 한다는 의미다.
+  - EX) : TO 설정페이지와 해제 페이지를 포함하려면, 설정 페이지를 표함하고, 테스트 페이지 내용을 포함하고, 해체 페이지를 포함한다.
+    - TO 설정 페이지를 포함하려면, 슈트이면 슈트 설정 페이지를 포함한 후 일반 설정 페이지를 포함한다.
+    - TO 슈트 설정페이지를 포함하려면, 부모 계층에서 "SuiteSteUp"페이지를 찾아 include문과 페이지 경로를 추가한다.
+- TO 문단을 읽어내려 가듯이 코드를 구현하면 추상화 수준을 일관되게 유지하기가 쉬워진다.
+
+## Switch 문
+
+---
+
+- Switch 문은 작게 만들기 어렵다.(if/else 여러 구문도 포함)
+
+- 본질적으로 switch 문은 N가지를 처리한다. switch 문을 다형성(polymophism)을 이용해 저차원 클래스에 숨기고 절대로 반복하지 않는 방법은 있다.
+
+- ```java
+  public Money calculatePay(Employee e) throws InvalidEmployeeType{
+      switch (e.type) {
+          case COMMISSIONED :
+              return calculateCommissionedPay(e);
+          case HOURLY :
+              return calculateHourlyPay(e);
+          case SALARIED : 
+              return calculateSalariedPay(e);
+          default :
+              throw new InvalidEmployeeType(e.type);
+      }
+  }
+  ```
+
+  위 함수는 다음의 문제가 있다.
+
+  1. 함수가 길며, 경우가 늘어나면 더 길어질 수 있다.
+  2. '한 가지' 작업만 수행하지 않는다.
+  3. SRP(Single Responsibility Principle, 단일 책임 원칙)을 위반한다. 코드를 변경할 이유가 여럿이기 때문이다.
+  4. OCP(Open Closed Principle, 개방 폐쇄 원칙)을 위반한다. 세 직원 유형을 추가할 때마다 코드를 변경하기 때문이다.
+  5. **위 함수와 구조가 동일한 함수가 무한정 존재할 수 있다**
+     - isPayday(Employee e, Date date)가 여럿 존재할 수 있다.
 
 ## 정리 및 느낀점
 
