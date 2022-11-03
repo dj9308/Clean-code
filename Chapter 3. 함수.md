@@ -90,7 +90,61 @@
   3. SRP(Single Responsibility Principle, 단일 책임 원칙)을 위반한다. 코드를 변경할 이유가 여럿이기 때문이다.
   4. OCP(Open Closed Principle, 개방 폐쇄 원칙)을 위반한다. 세 직원 유형을 추가할 때마다 코드를 변경하기 때문이다.
   5. **위 함수와 구조가 동일한 함수가 무한정 존재할 수 있다**
-     - isPayday(Employee e, Date date)가 여럿 존재할 수 있다.
+     - isPayday(Employee e, Date date) 또는 
+       deliverPay(Employee e, Money pay); 이 여러개일 수 있다.
+
+## 서술적인 이름을 사용하라.
+
+---
+
+- testableHtml을 SetupTearDownIncluder로 변경하는 것이 의미 표현에 있어 더 좋다.
+- 함수는 작고 단순할수록 서술적인 이름을 고르기도 쉬워진다.
+- 길고 서술적인 이름이 짧고 어려운 이름보다, 또한 주석보다 더 좋다.
+- 함수 이름을 정할 때, 여러 단어가 쉽게 읽히는 명명법을 사용한다. 그 다음, 여러 단어를 사용해 함수 기능을 잘 표현하는 이름을 선택한다.
+- EX) : includeSetupAndTeardownPages, includeSetupPages 등
+
+## 함수 인수
+
+---
+
+- 함수에서 인수의 개수는 적을수록 좋다. 삼항부터 피하는 편이 좋다.
+- StringBuffer 같은 인수는 인수보다 인스턴스 변수로 선언하는 것이 바랍직하다.
+- 출력 인수는 입력 인수보다 이해가 어렵다. 기본적으로 함수에 인수로 입력을 넘기고 반환값으로 출력을 받는다는 개념에 익숙하기 때문이다.
+- 최선은 입력 인수가 없는 경우이며, 차선은 입력 인수가 1개뿐인 경우다.
+
+### 단항 함수
+
+- 인수 1개를 넘기는 이유는 주로 2가지이다.
+  1. 인수에 질문을 던지는 경우
+     ex): boolean fileExists("MyFile");
+  2. 인수를 어떤 것으로 변환해 결과를 반환하는 경우.
+     ex): InputStream fileOpen("MyFile");
+- 또한 이벤트가 단항 함수 형식으로 쓰인다.
+  - 이벤트 함수는 입력 인수만 있으며, 출력 인수는 없다.
+  - ex): passwordAttemptFailedNtimes(int attempts);
+- 변환 함수에서 출력 인수를 사용하면 혼란을 일으킨다.
+  - StringBuffer transform(StringBuffer in)이 void transform(StringBuffer out)보다 좋다.
+  - 입력 인수를 그대로 돌려주는 함수라 할지라도 변환 함수 형식을 따르는 것이 좋다. 변환 형태는 유지하기 때문이다.
+
+### 플래그 형식
+
+- 플래그 인수는 bool 값을 넘기는 관례로서, 쓰지 않아야 한다.
+- 함수가 한꺼번에 여러가지를 처리한다고 선언하는 것이기 때문이다.
+- ex): render(boolean isSuite)라는 함수는 renderForSuite()와 renderForSingleTest()라는 함수로 나눠야 한다. 
+
+### 이항 함수
+
+- 인수가 2개인 함수는 1개인 함수보다 이해하기 어렵다.
+- 좌표처럼 이항이 두개가 기본인 경우도 있다.
+- 하지만 대부분 인수 간 순서가 없기 때문에, 하나로 변환하도록 해야 한다.
+- 함수를 하나 더 생성하거나 인수 하나를 인스턴스 변수로 변환한다
+
+### 인수 객체
+
+- 인수가 2~3개 필요하다면 일부를 독자적인 클래스 변수로 선언할 수 있다.
+  - ex): Circle makeCircle(double x, double y, double radius);
+  - Circle makeCircle(Point center, double radius);
+- 변수를 묶어 넘기려면 이름을 붙여야 하므로 결국은 개념을 포현하게 된다.
 
 ## 정리 및 느낀점
 
@@ -98,3 +152,5 @@
 
 - 함수를 나누는 것은 목적을 하나만 두고 코드를 짜는 것.
 - declarations, initializations, sieve 별로 함수로 나눌 수 있다.
+- boolean 형식을 인수로 쓸바엔, 함수를 두개로 나눠라.
+- 인수를 줄이려면 객체를 더 생성하거나 인스턴스 변수를 생성한다.
